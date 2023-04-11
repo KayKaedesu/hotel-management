@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
-const value = z.number().nonnegative()
+const source = z.enum(['Bills', 'Bank', 'Credit'])
 
-export { value }
-export { id as incomeId } from './base'
-export { dateTime as date } from './base'
+export { id as incomeId, money as amount, dateTime as receivedAt } from './base'
+export { source }

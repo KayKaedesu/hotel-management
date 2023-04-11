@@ -6,3 +6,4 @@ export {
 export { reserveId } from './reserves'
 export { customerId } from './customers'
 export { roomId } from './rooms'
+export { incomeId } from './income'

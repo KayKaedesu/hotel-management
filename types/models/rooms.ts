@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
-const roomId = z.string().nonempty()
+const roomNum = z.string()
 
-export { roomId }
+export { roomNum }
+export { id as roomId } from './base'
 export { roomTypeId } from './room_types'

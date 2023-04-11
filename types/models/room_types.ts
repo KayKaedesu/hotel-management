@@ -1,7 +1,6 @@
 import { z } from 'zod'
-import { id as roomTypeId } from './base'
 
 const roomType = z.string()
-const roomCost = z.number().positive()
 
-export { roomType, roomCost, roomTypeId }
+export { id as roomTypeId, money as dailyCost } from './base'
+export { roomType }

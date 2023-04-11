@@ -12,8 +12,8 @@ const scheduleDate = z.enum([
 
 const hourInADay = z.number().int().gte(0).lt(24)
 
-const startAt = hourInADay
-const endAt = hourInADay
+const startHour = hourInADay
+const endHour = hourInADay
 
-export { scheduleDate, startAt, endAt }
 export { id as workScheduleId } from './base'
+export { scheduleDate, startHour, endHour }
