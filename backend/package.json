@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "ts-node app.ts",
-    "dev": "tsc && concurrently \"tsc -w\" \"nodemon -r dotenv/config dist/app.js\""
+    "dev": "nodemon app.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,7 @@
     "express": "^4.18.2",
     "mysql2": "^3.2.0",
     "ts-node": "^10.9.1",
+    "types": "workspace:^",
     "zod": "^3.21.4",
     "zod-express-middleware": "^1.4.0"
   },
