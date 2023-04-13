@@ -1,5 +1,5 @@
 export {
-  id as worklogId,
+  id as workLogId,
   dateTime as startAt,
   dateTime as endAt,
 } from './base'

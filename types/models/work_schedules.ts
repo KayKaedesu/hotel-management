@@ -16,4 +16,5 @@ const startHour = hourInADay
 const endHour = hourInADay
 
 export { id as workScheduleId } from './base'
+export { employeeId } from './employees'
 export { scheduleDate, startHour, endHour }
