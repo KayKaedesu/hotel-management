@@ -2,5 +2,5 @@ export {
   id as workLogId,
   dateTime as startAt,
   dateTime as endAt,
-} from './base'
-export { employeeId } from './employees'
+} from './base.js'
+export { employeeId } from './employees.js'

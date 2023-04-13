@@ -2,8 +2,8 @@ export {
   id as checkInOutId,
   dateTime as startAt,
   dateTime as endAt,
-} from './base'
-export { reserveId } from './reserves'
-export { customerId } from './customers'
-export { roomId } from './rooms'
-export { incomeId } from './income'
+} from './base.js'
+export { reserveId } from './reserves.js'
+export { customerId } from './customers.js'
+export { roomId } from './rooms.js'
+export { incomeId } from './income.js'

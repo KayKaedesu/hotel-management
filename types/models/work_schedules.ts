@@ -15,6 +15,6 @@ const hourInADay = z.number().int().gte(0).lt(24)
 const startHour = hourInADay
 const endHour = hourInADay
 
-export { id as workScheduleId } from './base'
-export { employeeId } from './employees'
+export { id as workScheduleId } from './base.js'
+export { employeeId } from './employees.js'
 export { scheduleDate, startHour, endHour }
