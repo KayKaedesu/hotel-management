@@ -7,6 +7,6 @@ services:
     env_file:
       - './backend/.env'
     ports:
-      - ${MYSQL_PORT}:${MYSQL_PORT}
+      - ${MYSQL_TCP_PORT}:${MYSQL_TCP_PORT}
     volumes:
       - ./.temp/mysql/data:/var/lib/mysql
