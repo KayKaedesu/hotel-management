@@ -1,0 +1,68 @@
+import CustomerHeader, { UserSetter, LinkTab, User } from './header'
+import { AppShell } from '@mantine/core'
+import { Outlet } from 'react-router-dom'
+import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
+
+export const useCustomerUserStore = create<User & UserSetter>()(
+  persist(
+    (set) => {
+      const defaultUser: User = {
+        image: '',
+        name: 'ยังไม่ได้เข้าสู่ระบบ',
+        loggedIn: false,
+      }
+
+      return {
+        ...defaultUser,
+        setImage(value) {
+          set(() => ({ image: value }))
+        },
+        setName(value) {
+          set(() => ({ name: value }))
+        },
+        setLoggedIn(value) {
+          set(() => ({ loggedIn: value }))
+        },
+        setUser(value: User) {
+          set(() => value)
+        },
+        reset() {
+          set(() => defaultUser)
+        },
+      }
+    },
+    {
+      name: 'customerUser',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+)
+
+const linkTabs: LinkTab[] = [
+  {
+    label: 'หน้าหลัก',
+    link: '/customer',
+  },
+  {
+    label: 'ตัวอย่างห้อง',
+    link: '/customer/room-types',
+  },
+  {
+    label: 'จองห้อง',
+    link: '/customer/reserve-room',
+  },
+  {
+    label: 'ติดต่อสอบถาม',
+    link: '/customer/about',
+  },
+]
+
+export default function CustomerShell() {
+  const { image, name, loggedIn } = useCustomerUserStore()
+  return (
+    <AppShell header={<CustomerHeader tabs={linkTabs} />}>
+      <Outlet />
+    </AppShell>
+  )
+}

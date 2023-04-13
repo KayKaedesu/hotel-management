@@ -2,6 +2,7 @@ import { AppShell, Navbar } from '@mantine/core'
 import { Outlet } from 'react-router-dom'
 import NavbarLinksGroup, { LinksGroupProps } from './links'
 import { IconUserPlus, IconCalendarTime } from '@tabler/icons-react'
+
 import Header from './header'
 
 const navLinks: LinksGroupProps[] = [
@@ -21,23 +22,22 @@ const navLinks: LinksGroupProps[] = [
     links: [
       {
         label: 'เพิ่มการจอง',
-        link: '/reception/booking/add'
+        link: '/reception/booking/add',
       },
       {
         label: 'ดูรายการการจอง',
-        link: '/reception/booking/view'
-      }
-    ]
+        link: '/reception/booking/view',
+      },
+    ],
   },
-
 ]
 
-export default function ReceptionShell() {
+export default function ReceptionistShell() {
   return (
     <AppShell
       padding="md"
       navbar={
-        <Navbar width={{ base: 300 }}>
+        <Navbar width={{ base: 225 }} >
           {navLinks.map((props) => (
             <NavbarLinksGroup {...props} />
           ))}
