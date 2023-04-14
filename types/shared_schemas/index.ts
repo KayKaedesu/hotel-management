@@ -9,10 +9,17 @@ export const GetRoomsResponse = z.object({
     z.object({
       room_id: room.roomId,
       room_num: room.roomNum,
-      room_type: roomType.roomType,
+      room_type: roomType.name,
       daily_cost: roomType.dailyCost,
     })
   ),
+})
+
+export const GetRoomTypesResponse = z.object({
+  room_type_id: roomType.roomTypeId,
+  daily_cost: roomType.dailyCost,
+  name: roomType.name,
+  description: roomType.description
 })
 
 const _RoomReserveReqParams = z.object({

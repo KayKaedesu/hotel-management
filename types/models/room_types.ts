@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
-const roomType = z.string()
+const name = z.string()
+const description = z.string()
 
 export { id as roomTypeId, money as dailyCost } from './base.js'
-export { roomType }
+export { name, description }
