@@ -56,6 +56,12 @@ importers:
         specifier: ^4.9.5
         version: 4.9.5
 
+  data-gen:
+    dependencies:
+      '@faker-js/faker':
+        specifier: 8.0.0-alpha.1
+        version: 8.0.0-alpha.1
+
   frontend:
     dependencies:
       '@emotion/react':
@@ -1860,6 +1866,11 @@ packages:
     resolution: {integrity: sha512-IoD2MfUnOV58ghIHCiil01PcohxjbYR/qCxsoC+xNgUwh1EY8jOOrYmu3d3a71+tJJ23uscEV4X2HJWMsPJu4g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@faker-js/faker@8.0.0-alpha.1:
+    resolution: {integrity: sha512-0kfSscVJgiqqRuoNbLxiUd0GhOyCzXPrydzqUon5J/CMrXMHpi3n8rdxmUXO5HUot7ahrEuW8thu2m4Txkf8Gg==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
+    dev: false
 
   /@floating-ui/core@1.2.6:
     resolution: {integrity: sha512-EvYTiXet5XqweYGClEmpu3BoxmsQ4hkj3QaYA6qEnigCWffTP3vNRwBReTdrwDwo7OoJ3wM8Uoe9Uk4n+d4hfg==}

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import * as customer from '../models/customers.js'
 import * as room from '../models/rooms.js'
 import * as roomType from '../models/room_types.js'
 import * as reserve from '../models/reserves.js'
@@ -19,6 +20,11 @@ const _RoomReserveReqParams = z.object({
   customerId: reserve.customerId,
   startDate: reserve.startDate,
   endDate: reserve.endDate,
+})
+
+export const PostReservesRequest = z.object({
+  user_id: reserve.customerId,
+  room_num: room.roomNum,
 })
 
 export const CustomerRoomReserveReqParams = _RoomReserveReqParams.extend({})

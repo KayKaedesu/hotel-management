@@ -1,6 +1,7 @@
 import { Router } from 'express'
-import { GetRoomsResponse } from 'types'
+import { GetRoomsResponse, PostReservesRequest } from 'types'
 import databasePool from '../adapters/db_adapter.js'
+import { validateRequestBody } from 'zod-express-middleware'
 const customerRouter = Router()
 
 customerRouter.get('/rooms', (_req, res) => {
@@ -16,6 +17,9 @@ customerRouter.get('/rooms', (_req, res) => {
       'ORDER BY room_num asc;',
     ].join(' '),
     function (error, results) {
+      if (error) {
+        res.status(500).send(error)
+      }
       const responseObject = GetRoomsResponse.parse({
         rooms: results,
       })
@@ -23,5 +27,27 @@ customerRouter.get('/rooms', (_req, res) => {
     }
   )
 })
+
+customerRouter.post(
+  '/reserves',
+  validateRequestBody(PostReservesRequest),
+  (req, res) => {
+    // const connection = databasePool.getConnection()
+    // databasePool.query(
+    //   [
+    //     // 'INSERT '
+    //   ].join(' '),
+    //   function (error, results) {
+    //     if (error) {
+    //       throw error
+    //     }
+    //     const responseObject = GetRoomsResponse.parse({
+    //       rooms: results,
+    //     })
+    //     res.json(responseObject)
+    //   }
+    // )
+  }
+)
 
 export default customerRouter
