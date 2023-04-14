@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:db": "docker-compose --env-file ./backend/.env up",
-    "sql-dump": "docker exec hotel-management_database_1 sh -c 'exec mysqldump -P $MYSQL_TCP_PORT -u root --all-databases' > ./all-db.sql",
+    "sql-dump": "docker exec hotel-management_database_1 sh -c \"exec mysqldump -P $MYSQL_TCP_PORT -u root --all-databases\" > ./all-db.sql",
     "sql-restore": "docker exec -i hotel-management_database_1 mysql < all-db.sql",
     "sql-it": "docker exec -it hotel-management_database_1 mysql"
   },
