@@ -22,20 +22,20 @@ ownerRouter.get('/employees', (_req, res) => {
 })
 
 ownerRouter.get('/income', (_req, res) => {
-    databasePool.query(
-      [
-        'SELECT',
-        'amount,',
-        'received_at,',
-        'source,',
-        'FROM income',
-        'ORDER BY received_at asc;',
-      ].join(' '),
-      function (error, results) {
-        const responseObject = results
-        res.json(responseObject)
-      }
-    )
-  })
+  databasePool.query(
+    [
+      'SELECT',
+      'amount,',
+      'received_at,',
+      'source,',
+      'FROM income',
+      'ORDER BY received_at asc;',
+    ].join(' '),
+    function (error, results) {
+      const responseObject = results
+      res.json(responseObject)
+    }
+  )
+})
 
 export default ownerRouter

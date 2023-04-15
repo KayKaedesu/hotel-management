@@ -7,26 +7,24 @@ import {
 import databasePool from '../adapters/db_adapter.js'
 import { validateRequestBody } from 'zod-express-middleware'
 import { TypedRequestBody } from 'zod-express-middleware'
-import { RowDataPacket } from 'mysql2'
+import { RowDataPacket } from 'mysql2/promise'
+import { dateFormat } from '../utils/format.js'
+import { start } from 'repl'
+
 const customerRouter = Router()
 
-customerRouter.get('/room_types', (_req, res) => {
-  databasePool.query(
-    ['SELECT', '*', 'FROM room_types', 'ORDER BY room_num asc;'].join(' '),
-    function (error, results) {
-      if (error) {
-        res.status(500).send(error)
-      }
-      const responseObject = GetRoomsResponse.parse({
-        roomsTypes: GetRoomTypesResponse,
-      })
-      res.json(responseObject)
-    }
+customerRouter.get('/room_types', async (_req, res) => {
+  const [rows, results] = await databasePool.query(
+    ['SELECT', '*', 'FROM room_types', 'ORDER BY room_num asc;'].join(' ')
   )
+  const responseObject = GetRoomsResponse.parse({
+    roomsTypes: rows,
+  })
+  res.json(responseObject)
 })
 
-customerRouter.get('/rooms', (_req, res) => {
-  databasePool.query(
+customerRouter.get('/rooms', async (_req, res) => {
+  const [rows, results] = await databasePool.query(
     [
       'SELECT',
       'room_id,',
@@ -35,60 +33,53 @@ customerRouter.get('/rooms', (_req, res) => {
       'daily_cost',
       'FROM rooms',
       'JOIN room_types AS t USING (room_type_id)',
-      'LEFT JOIN reserves AS r USING (room_id)',
-      'LEFT JOIN check_in_outs AS c USING (room_id)',
-      'WHERE r.start_date <= NOW() AND r.end_date >= NOW() AND c.check_out_date IS NULL',
       'ORDER BY room_num asc;',
-    ].join(' '),
-    function (error, results) {
-      if (error) {
-        res.status(500).send(error)
-      }
-      const responseObject = GetRoomsResponse.parse({
-        rooms: results,
-      })
-      res.json(responseObject)
-    }
+    ].join(' ')
   )
+  const responseObject = GetRoomsResponse.parse({
+    rooms: rows,
+  })
+  res.json(responseObject)
 })
 
 customerRouter.post(
   '/reserves',
   validateRequestBody(PostReservesRequest),
-  function (req: TypedRequestBody<typeof PostReservesRequest>, res) {
-    const { end_date, room_nums, start_date, user_id, payment_amount } =
+  async function (req: TypedRequestBody<typeof PostReservesRequest>, res) {
+    const { end_date, room_ids, start_date, user_id, payment_amount } =
       req.body
     const paymentSource = 'Bank'
-    databasePool.getConnection(function (error, connection) {
-      if (error) {
-        throw error
-      }
-      connection.beginTransaction(function (error) {
+
+    const connection = await databasePool.getConnection()
+    await connection.beginTransaction()
+
+    const [results] = await connection.query(
+      ['INSERT INTO income (amount, source) VALUES (?, ?);'].join(' '),
+      [payment_amount, paymentSource]
+    )
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const incomeId = results.insertId
+
+    await Promise.all(
+      room_ids.map(async (room_id) => {
         connection.query(
-          ['INSERT INTO income (amount, source) VALUES (?, ?);'].join(' '),
-          [payment_amount, paymentSource],
-          function (error, results: RowDataPacket[]) {
-            results.insertId
-          }
-        )
-        connection.commit()
-        databasePool.query(
           [
-            'INSERT INTO reserves (customer_id, start_date, end_date, income_id, room_id) VALUES (?, ?, ?);',
+            'INSERT INTO reserves (customer_id, start_date, end_date, income_id, room_id)',
+            'VALUES (?, ?, ?, ?, ?);',
           ].join(' '),
-          [],
-          function (error, results) {
-            if (error) {
-              throw error
-            }
-            const responseObject = GetRoomsResponse.parse({
-              rooms: results,
-            })
-            res.json(responseObject)
-          }
+          [
+            user_id,
+            dateFormat(start_date),
+            dateFormat(end_date),
+            incomeId,
+            room_id,
+          ]
         )
       })
-    })
+    )
+
+    connection.commit()
   }
 )
 

@@ -23,19 +23,11 @@ export const GetRoomTypesResponse = z.object({
   description: roomType.description,
 })
 
-const _RoomReserveReqParams = z.object({
-  id: reserve.roomId,
-  customerId: reserve.customerId,
-  startDate: reserve.startDate,
-  endDate: reserve.endDate,
-})
-
 export const PostReservesRequest = z.object({
   user_id: reserve.customerId,
-  room_nums: room.roomNum.array(),
+  room_ids: room.roomId.array(),
   start_date: reserve.startDate,
   end_date: reserve.endDate,
   payment_amount: income.amount,
 })
 
-export const CustomerRoomReserveReqParams = _RoomReserveReqParams.extend({})

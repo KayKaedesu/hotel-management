@@ -131,7 +131,7 @@ function CustomerReserveRoom() {
             onClick={() => {
               sendReserveRequest({
                 user_id: id ?? -1,
-                room_nums: reservings.map((room) => room.room_num),
+                room_ids: reservings.map((room) => room.room_id),
                 start_date: startDate ?? new Date(0),
                 end_date: endDate ?? new Date(0),
                 payment_amount: paymentAmount,

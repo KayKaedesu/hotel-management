@@ -1,9 +1,9 @@
-import mysql from 'mysql2'
+import mysql from 'mysql2/promise'
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-const databasePool = mysql.createPool({
+const databasePool = await mysql.createPool({
   host: '127.0.0.1',
   port: Number(process.env.MYSQL_TCP_PORT),
   user: process.env.MYSQL_USER,
