@@ -107,11 +107,13 @@ const useStyles = createStyles((theme) => ({
 }))
 
 export type User = {
+  id?: number
   name: string
   image: string
   loggedIn?: boolean
 }
 export type UserSetter = {
+  setId:(value: User['id']) => void
   setName: (value: User['name']) => void
   setImage: (value: User['image']) => void
   setLoggedIn: (value: User['loggedIn']) => void
@@ -191,10 +193,9 @@ export default function CustomerHeader({ tabs }: HeaderTabsProps) {
       style={{
         textDecoration: 'none',
       }}
+      key={index}
     >
-      <Tabs.Tab value={tab.link} key={index}>
-        {tab.label}
-      </Tabs.Tab>
+      <Tabs.Tab value={tab.link}>{tab.label}</Tabs.Tab>
     </Link>
   ))
 

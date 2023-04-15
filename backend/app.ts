@@ -1,6 +1,7 @@
 import express from 'express'
 import path from 'path'
 import dotenv from 'dotenv'
+import cors from 'cors'
 import { fileURLToPath } from 'url'
 
 import homeRouter from './routers/home.js'
@@ -13,6 +14,11 @@ dotenv.config()
 // -------------------setting up
 const app = express()
 
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+  })
+)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -24,8 +30,6 @@ app.use('/test/', exampleRouter)
 app.use('/customer/', customerRouter)
 
 // --------------------Listen
-
-
 
 const PORT = process.env.BACKEND_URL
   ? new URL(process.env.BACKEND_URL).port

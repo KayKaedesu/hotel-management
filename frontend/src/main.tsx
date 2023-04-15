@@ -13,6 +13,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       theme={{
         fontFamily: 'Prompt, sans serif',
       }}
+      withCSSVariables
       withGlobalStyles
       withNormalizeCSS
     >

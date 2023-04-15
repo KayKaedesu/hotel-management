@@ -15,7 +15,7 @@ import CustomerAbout from '../views/CustomerView/About'
 import CustomerAuthLogin from '../views/CustomerView/auth/Login'
 import CustomerAuthRegister from '../views/CustomerView/auth/Register'
 import CustomerAuthShell from '../views/CustomerView/auth/shell'
-import OuterShell from '../views/OuterShell'
+import CustomerListReserves from '../views/CustomerView/ListReserves'
 
 export const receptionistRoutes: RouteObject[] = [
   {
@@ -51,6 +51,10 @@ export const customerRoutes: RouteObject[] = [
         path: 'about',
         element: <CustomerAbout />,
       },
+      {
+        path: 'list-reserves',
+        element: <CustomerListReserves />,
+      }
     ],
   },
   {
@@ -71,7 +75,6 @@ export const customerRoutes: RouteObject[] = [
 
 const router = createBrowserRouter([
   {
-    element: <OuterShell />,
     children: [...receptionistRoutes, ...customerRoutes],
   },
 ])

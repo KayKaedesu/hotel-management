@@ -1,5 +1,5 @@
 import CustomerHeader, { UserSetter, LinkTab, User } from './header'
-import { AppShell } from '@mantine/core'
+import { AppShell, Container } from '@mantine/core'
 import { Outlet } from 'react-router-dom'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
@@ -15,6 +15,9 @@ export const useCustomerUserStore = create<User & UserSetter>()(
 
       return {
         ...defaultUser,
+        setId(value) {
+          set(() => ({ id: value }))
+        },
         setImage(value) {
           set(() => ({ image: value }))
         },
@@ -53,6 +56,10 @@ const linkTabs: LinkTab[] = [
     link: '/customer/reserve-room',
   },
   {
+    label: 'ห้องที่จองไว้',
+    link: '/customer/list-reserves',
+  },
+  {
     label: 'ติดต่อสอบถาม',
     link: '/customer/about',
   },
@@ -62,7 +69,9 @@ export default function CustomerShell() {
   const { image, name, loggedIn } = useCustomerUserStore()
   return (
     <AppShell header={<CustomerHeader tabs={linkTabs} />}>
-      <Outlet />
+      <Container>
+        <Outlet />
+      </Container>
     </AppShell>
   )
 }
