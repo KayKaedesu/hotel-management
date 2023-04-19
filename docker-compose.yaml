@@ -4,9 +4,12 @@ services:
   database:
     image: mysql
     restart: always
+    container_name: hotel-mysql
     env_file:
       - './backend/.env'
     ports:
       - ${MYSQL_TCP_PORT}:${MYSQL_TCP_PORT}
+    environment:
+      - TZ=Asia/Bangkok
     volumes:
       - ./.temp/mysql/data:/var/lib/mysql
