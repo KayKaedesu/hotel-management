@@ -1,9 +1,10 @@
-import { z } from 'zod'
+import { array, z } from 'zod'
 import * as customer from '../models/customers.js'
 import * as room from '../models/rooms.js'
 import * as roomType from '../models/room_types.js'
 import * as reserve from '../models/reserves.js'
-import { income } from '../models/index.js'
+import { income, workSchedules } from '../models/index.js'
+import * as employee from '../models/employees.js'
 
 export const GetRoomsResponse = z.object({
   rooms: z.array(
@@ -71,4 +72,20 @@ export const PostReservesRequest = z.object({
       }
     ),
   payment_amount: income.amount,
+})
+
+export const GetSchedulesResponse = z.object({
+  schedules: z.array(
+    z.object({
+      schedule_date: workSchedules.scheduleDate,
+      first_name: employee.firstName,
+      last_name: employee.lastName,
+      start_hour: workSchedules.startHour,
+      work_hours: workSchedules.workHours
+    })
+  )
+})
+
+export const GetSchedulesRequest = z.object({
+  employee_id: employee.employeeId
 })
