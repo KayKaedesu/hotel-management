@@ -1,10 +1,11 @@
-import { z } from 'zod'
+import { array, z } from 'zod'
 import * as customer from '../models/customers.js'
 import * as room from '../models/rooms.js'
 import * as roomType from '../models/room_types.js'
 import * as reserve from '../models/reserves.js'
+import { income, workSchedules } from '../models/index.js'
+import * as employee from '../models/employees.js'
 import * as checkInOut from '../models/check_in_outs.js'
-import { income } from '../models/index.js'
 
 export const CustomerGetRoomsResponse = z.object({
   rooms: z.array(
@@ -78,13 +79,27 @@ export const ReceptionGetRoomsResponse = z.object({
   allRooms: z.array(
     z.object({
       room_id: room.roomId,
-      room_num:room.roomNum,
-      room_type_id:room.roomTypeId,
-      daily_cost:roomType.dailyCost,
-      name:roomType.name,
-      description:roomType.description,
-      reserve_id:reserve.reserveId.optional(),
-      check_in_out_id:checkInOut.checkInOutId.optional()
+      room_num: room.roomNum,
+      room_type_id: room.roomTypeId,
+      daily_cost: roomType.dailyCost,
+      name: roomType.name,
+      description: roomType.description,
+      reserve_id: reserve.reserveId.optional(),
+      check_in_out_id: checkInOut.checkInOutId.optional(),
+    })
+  ),
+})
+
+export const EmployeeGetSelfScheduleRequest = z.object({
+  employee_id: employee.employeeId,
+})
+
+export const EmployeeGetSelfScheduleResponse = z.object({
+  schedules: z.array(
+    z.object({
+      schedule_date: workSchedules.scheduleDate,
+      start_hour: workSchedules.startHour,
+      work_hours: workSchedules.workHours,
     })
   ),
 })

@@ -15,7 +15,7 @@ const customerRouter = Router()
 
 customerRouter.get('/room_types', async (_req, res) => {
   const [rows, results] = await databasePool.query(
-    ['SELECT', '*', 'FROM room_types', 'ORDER BY room_num asc;'].join(' ')
+    ['SELECT', '*', 'FROM room_types', 'ORDER BY room_type_id asc;'].join(' ')
   )
   const responseObject = CustomerGetRoomsResponse.parse({
     roomsTypes: rows,
