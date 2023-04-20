@@ -18,6 +18,8 @@ import CustomerAuthLogin from '../views/CustomerView/auth/Login'
 import CustomerAuthRegister from '../views/CustomerView/auth/Register'
 import CustomerAuthShell from '../views/CustomerView/auth/shell'
 import CustomerListReserves from '../views/CustomerView/ListReserves'
+import EmployeeShell from '../views/EmployeeView/shell'
+import EmployeeWorks from '../views/EmployeeView/Works'
 
 export const receptionistRoutes: RouteObject[] = [
   {
@@ -83,6 +85,19 @@ export const customerRoutes: RouteObject[] = [
   },
 ]
 
+const employeeRoutes: RouteObject[] = [
+  {
+    element: <EmployeeShell />,
+    path: '/employee',
+    children: [
+      {
+        path: '',
+        element: <EmployeeWorks />,
+      },
+    ],
+  },
+]
+
 const homeRouter: RouteObject = {
   path: '/',
   element: <Home />,
@@ -90,7 +105,7 @@ const homeRouter: RouteObject = {
 
 const router = createBrowserRouter([
   {
-    children: [homeRouter, ...receptionistRoutes, ...customerRoutes],
+    children: [homeRouter, ...receptionistRoutes, ...customerRoutes, ...employeeRoutes],
   },
 ])
 
