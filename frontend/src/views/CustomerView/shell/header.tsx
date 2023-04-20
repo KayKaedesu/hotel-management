@@ -12,6 +12,7 @@ import {
   rem,
   Button,
   Box,
+  TextInput,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import {
@@ -180,7 +181,7 @@ function DropdownMenu() {
 }
 
 export default function CustomerHeader({ tabs }: HeaderTabsProps) {
-  const { name, image } = useCustomerUserStore()
+  const { name, image, setId } = useCustomerUserStore()
   const user: User = { name, image }
   const { classes, cx } = useStyles()
   const [opened, { toggle }] = useDisclosure(false)
@@ -254,7 +255,12 @@ export default function CustomerHeader({ tabs }: HeaderTabsProps) {
         >
           <Tabs.List>{items}</Tabs.List>
         </Tabs>
+        
       </Container>
+      <TextInput type="number" onChange={(event) => {
+          setId(Number(event?.target.value))
+
+        }} />
     </Box>
   )
 }

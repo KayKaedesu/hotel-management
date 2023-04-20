@@ -4,7 +4,7 @@ import { ZodError, z } from 'zod'
 import { useCustomerUserStore } from '../shell'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { GetRoomsResponse, PostReservesRequest } from 'types'
+import { CustomerGetRoomsResponse, PostReservesRequest } from 'types'
 import { API_URL } from '../../../config'
 import {
   Box,
@@ -55,7 +55,7 @@ function CustomerReserveRoom() {
   const id = 1
   const navigate = useNavigate()
 
-  const [rooms, setRooms] = useState<z.infer<typeof GetRoomsResponse>>({
+  const [rooms, setRooms] = useState<z.infer<typeof CustomerGetRoomsResponse>>({
     rooms: [],
   })
   const [startDate, setStartDate] = useState<Date | null>()
@@ -67,7 +67,7 @@ function CustomerReserveRoom() {
   })
   const [paymentAmount, setPaymentAmount] = useState<number>(0)
 
-  const Rooms = GetRoomsResponse.shape.rooms
+  const Rooms = CustomerGetRoomsResponse.shape.rooms
   const [reservings, setReservings] = useState<z.infer<typeof Rooms>>([])
 
   // login guard
@@ -80,7 +80,7 @@ function CustomerReserveRoom() {
         navigate('/customer/auth/login')
       } else {
         axios.get(API_URL + '/customer/rooms').then(async (res) => {
-          setRooms(GetRoomsResponse.parse(res.data))
+          setRooms(CustomerGetRoomsResponse.parse(res.data))
         })
       }
     },
