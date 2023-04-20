@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import homeRouter from './routers/home.js'
 import exampleRouter from './routers/examples.js'
 import customerRouter from './routers/customer.js'
+import receptionRounter from './routers/reception.js'
 
 // ! DO NOT REMOVE
 dotenv.config()
@@ -28,6 +29,7 @@ app.use(express.static(path.join(fileURLToPath(import.meta.url), 'static')))
 app.use('/', homeRouter)
 app.use('/test/', exampleRouter)
 app.use('/customer/', customerRouter)
+app.use('/reception/', receptionRounter)
 
 // --------------------Listen
 

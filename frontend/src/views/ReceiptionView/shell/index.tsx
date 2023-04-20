@@ -1,7 +1,7 @@
 import { AppShell, Navbar } from '@mantine/core'
 import { Outlet } from 'react-router-dom'
 import NavbarLinksGroup, { LinksGroupProps } from './links'
-import { IconUserPlus, IconCalendarTime } from '@tabler/icons-react'
+import { IconUserPlus, IconCalendarTime, IconBedFilled } from '@tabler/icons-react'
 
 import Header from './header'
 
@@ -30,6 +30,11 @@ const navLinks: LinksGroupProps[] = [
       },
     ],
   },
+  {
+    label:'ห้อง',
+    icon:IconBedFilled,
+    link:'/reception/rooms'
+  }
 ]
 
 export default function ReceptionistShell() {

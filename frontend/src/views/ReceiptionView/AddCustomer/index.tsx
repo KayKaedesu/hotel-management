@@ -1,4 +1,4 @@
 function AddCustomer() {
-  return <div>AddCustomer</div>
+  return <div>Hello world</div>
 }
 export default AddCustomer

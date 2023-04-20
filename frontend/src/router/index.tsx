@@ -7,6 +7,7 @@ import {
 
 import AddCustomer from '../views/ReceiptionView/AddCustomer'
 import ReceptionistShell from '../views/ReceiptionView/shell'
+import CheckRoom from '../views/ReceiptionView/Rooms'
 import CustomerShell from '../views/CustomerView/shell'
 import CustomerRoomTypes from '../views/CustomerView/RoomTypes'
 import CustomerHome from '../views/CustomerView/Home'
@@ -26,6 +27,14 @@ export const receptionistRoutes: RouteObject[] = [
         path: 'add-customer',
         element: <AddCustomer />,
       },
+      {
+        path: 'rooms',
+        element: <CheckRoom />,
+      },
+      // {
+      //   path: 'add-customer',
+      //   element: <AddCustomer />,
+      // },
     ],
   },
 ]

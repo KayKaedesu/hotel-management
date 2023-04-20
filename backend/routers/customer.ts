@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import {
   GetRoomTypesResponse,
-  GetRoomsResponse,
+  CustomerGetRoomsResponse,
   PostReservesRequest,
 } from 'types'
 import databasePool from '../adapters/db_adapter.js'
@@ -17,7 +17,7 @@ customerRouter.get('/room_types', async (_req, res) => {
   const [rows, results] = await databasePool.query(
     ['SELECT', '*', 'FROM room_types', 'ORDER BY room_num asc;'].join(' ')
   )
-  const responseObject = GetRoomsResponse.parse({
+  const responseObject = CustomerGetRoomsResponse.parse({
     roomsTypes: rows,
   })
   res.json(responseObject)
@@ -36,7 +36,7 @@ customerRouter.get('/rooms', async (_req, res) => {
       'ORDER BY room_num asc;',
     ].join(' ')
   )
-  const responseObject = GetRoomsResponse.parse({
+  const responseObject = CustomerGetRoomsResponse.parse({
     rooms: rows,
   })
   res.json(responseObject)
