@@ -9,6 +9,7 @@ import exampleRouter from './routers/examples.js'
 import customerRouter from './routers/customer.js'
 import employeeRouter from './routers/employee.js'
 import receptionRounter from './routers/reception.js'
+import ownerRouter from './routers/owner.js'
 
 // ! DO NOT REMOVE
 dotenv.config()
@@ -32,6 +33,7 @@ app.use('/test/', exampleRouter)
 app.use('/customer/', customerRouter)
 app.use('/employee/', employeeRouter)
 app.use('/reception/', receptionRounter)
+app.use('/owner/', ownerRouter)
 
 // --------------------Listen
 

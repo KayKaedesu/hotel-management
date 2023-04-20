@@ -3,9 +3,18 @@ import * as customer from '../models/customers.js'
 import * as room from '../models/rooms.js'
 import * as roomType from '../models/room_types.js'
 import * as reserve from '../models/reserves.js'
-import { income, workSchedules } from '../models/index.js'
+import {
+  worklogs,
+  income,
+  workSchedules,
+  rooms,
+  roomTypes,
+  employees,
+  jobs,
+} from '../models/index.js'
 import * as employee from '../models/employees.js'
 import * as checkInOut from '../models/check_in_outs.js'
+import { accountType } from '../models/accounts.js'
 
 export const CustomerGetRoomsResponse = z.object({
   rooms: z.array(
@@ -90,7 +99,7 @@ export const ReceptionGetRoomsResponse = z.object({
   ),
 })
 
-export const EmployeeGetSelfScheduleRequest = z.object({
+export const EmployeeGetSelfRequest = z.object({
   employee_id: employee.employeeId,
 })
 
@@ -100,6 +109,65 @@ export const EmployeeGetSelfScheduleResponse = z.object({
       schedule_date: workSchedules.scheduleDate,
       start_hour: workSchedules.startHour,
       work_hours: workSchedules.workHours,
+    })
+  ),
+})
+
+export const EmployeeGetSelfLogResponse = z.object({
+  logs: z.array(
+    z.object({
+      start_at: worklogs.startAt,
+      end_at: worklogs.endAt,
+    })
+  ),
+})
+
+export const OwnerGetScheduleResponse = z.object({
+  schedules: z.array(
+    z.object({
+      schedule_date: workSchedules.scheduleDate,
+      first_name: employee.firstName,
+      last_name: employee.lastName,
+      start_hour: workSchedules.startHour,
+      work_hours: workSchedules.workHours,
+    })
+  ),
+})
+
+export const OwnerGetLogResponse = z.object({
+  logs: z.array(
+    z.object({
+      first_name: employee.firstName,
+      last_name: employee.lastName,
+      start_at: worklogs.startAt,
+      end_at: worklogs.endAt,
+    })
+  ),
+})
+
+export const OwnerGetIncomeResponse = z.object({
+  income: z.array(
+    z.object({
+      room_id: rooms.roomId,
+      name: roomTypes.name,
+      amount: income.amount,
+      received_at: income.receivedAt,
+      source: income.source,
+      reserve_id: reserve.reserveId,
+      check_in_out_id: checkInOut.checkInOutId,
+    })
+  ),
+})
+
+export const OwnerGetEmployeeResponse = z.object({
+  employees: z.array(
+    z.object({
+      first_name: employees.firstName,
+      last_name: employees.lastName,
+      tel_num: employees.telNum,
+      // email: accountType,
+      name: jobs.name,
+      hourly_wage: jobs.hourlyWage,
     })
   ),
 })
