@@ -5,6 +5,7 @@ import {
   RouteObject,
 } from 'react-router-dom'
 
+import Home from '../views/Home'
 import AddCustomer from '../views/ReceiptionView/AddCustomer'
 import ReceptionistShell from '../views/ReceiptionView/shell'
 import CheckRoom from '../views/ReceiptionView/Rooms'
@@ -63,7 +64,7 @@ export const customerRoutes: RouteObject[] = [
       {
         path: 'list-reserves',
         element: <CustomerListReserves />,
-      }
+      },
     ],
   },
   {
@@ -82,9 +83,14 @@ export const customerRoutes: RouteObject[] = [
   },
 ]
 
+const homeRouter: RouteObject = {
+  path: '/',
+  element: <Home />,
+}
+
 const router = createBrowserRouter([
   {
-    children: [...receptionistRoutes, ...customerRoutes],
+    children: [homeRouter, ...receptionistRoutes, ...customerRoutes],
   },
 ])
 

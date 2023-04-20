@@ -2,6 +2,7 @@
 module.exports = {
   extends: [
     'react-app',
+    'react-hooks',
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
