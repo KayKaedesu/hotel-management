@@ -73,7 +73,6 @@ export const PostReservesRequest = z.object({
     ),
   payment_amount: income.amount,
 })
-<<<<<<< HEAD
 
 export const ReceptionGetRoomsResponse = z.object({
   allRooms: z.array(
@@ -89,5 +88,3 @@ export const ReceptionGetRoomsResponse = z.object({
     })
   ),
 })
-=======
->>>>>>> c86f436941919e99e4a99ff2d02de99f8388d27f
