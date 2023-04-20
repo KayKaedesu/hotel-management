@@ -1,5 +1,6 @@
 import CustomerHeader, { UserSetter, LinkTab, User } from './header'
 import { AppShell, Container } from '@mantine/core'
+import { Notifications } from '@mantine/notifications'
 import { Outlet } from 'react-router-dom'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
@@ -71,6 +72,7 @@ export default function CustomerShell() {
     <AppShell header={<CustomerHeader tabs={linkTabs} />}>
       <Container>
         <Outlet />
+        <Notifications />
       </Container>
     </AppShell>
   )

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import axios from 'axios'
-import { z } from 'zod'
+import axios, { AxiosError } from 'axios'
+import { ZodError, z } from 'zod'
 import { useCustomerUserStore } from '../shell'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
@@ -15,13 +15,39 @@ import {
   Text,
   Title,
 } from '@mantine/core'
-import { DateInput } from '@mantine/dates'
+import { DateInput, DatePickerInput } from '@mantine/dates'
+import { notifications } from '@mantine/notifications'
 
-async function sendReserveRequest(data: z.infer<typeof PostReservesRequest>) {
-  console.log(data)
-  await axios.post('/customer/reserves', data, {
-    baseURL: API_URL,
-  })
+async function sendReserveRequest(data: any) {
+  try {
+    PostReservesRequest.parse(data)
+    const response = await axios.post('/customer/reserves', data, {
+      baseURL: API_URL,
+    })
+    if (response.data.message === 'success') {
+      notifications.show({
+        message: 'จองห้องสำเร็จ',
+        color: 'green',
+      })
+    }
+    
+
+  } catch (e) {
+    if (e instanceof ZodError) {
+      console.error(e)
+      notifications.show({
+        message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+        title: 'เกิดปัญหา',
+        color: 'red',
+      })
+    } else if (e instanceof AxiosError) {
+      console.log(e)
+      notifications.show({
+        message: 'เกิดข้อผิดพลาดบางอย่างในเซิฟเวอร์',
+        color: 'red',
+      })
+    }
+  }
 }
 
 function CustomerReserveRoom() {
@@ -32,8 +58,8 @@ function CustomerReserveRoom() {
   const [rooms, setRooms] = useState<z.infer<typeof GetRoomsResponse>>({
     rooms: [],
   })
-  const [startDate, setStartDate] = useState<Date | null>(null)
-  const [endDate, setEndDate] = useState<Date | null>(null)
+  const [startDate, setStartDate] = useState<Date | null>()
+  const [endDate, setEndDate] = useState<Date | null>()
   const [limitDate] = useState<Date>(() => {
     const date = new Date()
     date.setDate(date.getDate() + 7)
@@ -63,13 +89,15 @@ function CustomerReserveRoom() {
 
   useEffect(
     function () {
+      if (endDate == null || startDate == null) {
+        return
+      }
       setPaymentAmount(
         reservings.reduce((sum, resRoom) => {
-          return resRoom.daily_cost / 2 + sum
+          const resRoomCost = resRoom.daily_cost / 2 + sum
+          return resRoomCost
         }, 0) *
-          ((endDate?.getDate() ?? new Date().getDate()) +
-            1 -
-            (startDate?.getDate() ?? new Date().getDate()))
+          (endDate.getDate() - startDate.getDate())
       )
     },
     [startDate, endDate, reservings]
@@ -78,28 +106,23 @@ function CustomerReserveRoom() {
   return (
     <>
       <Grid columns={13} align="end">
-        <Grid.Col span="auto">
-          <DateInput
-            allowDeselect
-            onChange={setStartDate}
-            label="วัน"
-            placeholder="วันเริ่มต้น"
+        <Grid.Col>
+          <DatePickerInput
+            type="range"
+            label="ช่วงวันที่ต้องการจอง"
+            placeholder="ตั้งแต่..ถึง"
+            valueFormat='D MMM YYYY'
+            onChange={
+              (dates) => {
+                setStartDate(dates[0])
+                setEndDate(dates[1])
+              }
+            }
             minDate={new Date()}
-            maxDate={endDate ?? limitDate}
-          />
-        </Grid.Col>
-        <Grid.Col span={1}>
-          <Center>ถึง</Center>
-        </Grid.Col>
-        <Grid.Col span="auto">
-          <DateInput
-            allowDeselect
-            minDate={startDate ?? new Date()}
             maxDate={limitDate}
-            onChange={setEndDate}
-            placeholder="วันสิ้นสุด"
           />
         </Grid.Col>
+        
       </Grid>
       <Grid>
         <Grid.Col>
@@ -130,10 +153,9 @@ function CustomerReserveRoom() {
           <Button
             onClick={() => {
               sendReserveRequest({
-                user_id: id ?? -1,
+                user_id: 1,
                 room_ids: reservings.map((room) => room.room_id),
-                start_date: startDate ?? new Date(0),
-                end_date: endDate ?? new Date(0),
+                reserve_range: [startDate, endDate],
                 payment_amount: paymentAmount,
               })
             }}

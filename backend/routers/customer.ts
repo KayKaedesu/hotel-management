@@ -5,7 +5,7 @@ import {
   PostReservesRequest,
 } from 'types'
 import databasePool from '../adapters/db_adapter.js'
-import { validateRequestBody } from 'zod-express-middleware'
+import { processRequestBody, validateRequestBody } from 'zod-express-middleware'
 import { TypedRequestBody } from 'zod-express-middleware'
 import { RowDataPacket } from 'mysql2/promise'
 import { dateFormat } from '../utils/format.js'
@@ -44,10 +44,10 @@ customerRouter.get('/rooms', async (_req, res) => {
 
 customerRouter.post(
   '/reserves',
-  validateRequestBody(PostReservesRequest),
+  // ใช้ validate ถ้าไม่ได้ใช้ z.transform
+  processRequestBody(PostReservesRequest.transform((val) => val)),
   async function (req: TypedRequestBody<typeof PostReservesRequest>, res) {
-    const { end_date, room_ids, start_date, user_id, payment_amount } =
-      req.body
+    const { reserve_range, room_ids, user_id, payment_amount } = req.body
     const paymentSource = 'Bank'
 
     const connection = await databasePool.getConnection()
@@ -61,25 +61,33 @@ customerRouter.post(
     // @ts-ignore
     const incomeId = results.insertId
 
-    await Promise.all(
-      room_ids.map(async (room_id) => {
-        connection.query(
-          [
-            'INSERT INTO reserves (customer_id, start_date, end_date, income_id, room_id)',
-            'VALUES (?, ?, ?, ?, ?);',
-          ].join(' '),
-          [
-            user_id,
-            dateFormat(start_date),
-            dateFormat(end_date),
-            incomeId,
-            room_id,
-          ]
-        )
-      })
-    )
+    try {
+      await Promise.all(
+        room_ids.map(async (room_id) => {
+          connection.query(
+            [
+              'INSERT INTO reserves (customer_id, start_date, end_date, income_id, room_id)',
+              'VALUES (?, ?, ?, ?, ?);',
+            ].join(' '),
+            [
+              user_id,
+              dateFormat(reserve_range.end_date),
+              dateFormat(reserve_range.end_date),
+              incomeId,
+              room_id,
+            ]
+          )
+        })
+      )
 
-    connection.commit()
+      connection.commit()
+      res.status(201).json({ message: 'success' })
+    } catch (e) {
+      if (e instanceof Error) {
+        res.status(404).json(e)
+        console.error(e.message)
+      }
+    }
   }
 )
 

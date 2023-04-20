@@ -4,8 +4,15 @@ import { RouterProvider } from 'react-router-dom'
 import router from './router'
 
 import { MantineProvider } from '@mantine/core'
+import { DatesProvider } from '@mantine/dates'
+
+// import dayjs from 'dayjs'
+import 'dayjs/locale/th'
 
 import './index.css'
+
+// dayjs.locale('th')
+
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -17,7 +24,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       withGlobalStyles
       withNormalizeCSS
     >
-      <RouterProvider router={router} />
+      <DatesProvider settings={{locale: 'th', firstDayOfWeek: 0, labelSeparator:'ถึง' }}>
+
+        <RouterProvider router={router} />
+      </DatesProvider>
     </MantineProvider>
   </React.StrictMode>
 )
