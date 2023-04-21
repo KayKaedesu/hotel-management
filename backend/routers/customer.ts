@@ -1,15 +1,18 @@
 import { Router } from 'express'
 import {
-  GetRoomTypesResponse,
   CustomerGetRoomsResponse,
   PostReservesRequest,
+  CustomerGetRequest,
+  CustomerGetSelfReservesResponse,
 } from 'types'
 import databasePool from '../adapters/db_adapter.js'
-import { processRequestBody, validateRequestBody } from 'zod-express-middleware'
+import {
+  TypedRequestQuery,
+  processRequestBody,
+  validateRequestQuery,
+} from 'zod-express-middleware'
 import { TypedRequestBody } from 'zod-express-middleware'
-import { RowDataPacket } from 'mysql2/promise'
 import { dateFormat } from '../utils/format.js'
-import { start } from 'repl'
 
 const customerRouter = Router()
 
@@ -23,24 +26,82 @@ customerRouter.get('/room_types', async (_req, res) => {
   res.json(responseObject)
 })
 
+// empty rooms
 customerRouter.get('/rooms', async (_req, res) => {
   const [rows, results] = await databasePool.query(
-    [
-      'SELECT',
-      'room_id,',
-      'room_num,',
-      't.name AS room_type_name,',
-      'daily_cost',
-      'FROM rooms',
-      'JOIN room_types AS t USING (room_type_id)',
-      'ORDER BY room_num asc;',
-    ].join(' ')
+    `
+      SELECT
+        r.room_id,
+        room_num,
+        rt.name as room_type_name,
+        daily_cost
+      FROM rooms r
+      JOIN room_types rt USING (room_type_id)
+      WHERE
+        room_id NOT IN (
+          SELECT room_id
+          FROM check_in_outs
+          WHERE start_at <= NOW() AND end_at >= NOW()
+        )
+        AND room_id NOT IN (
+          SELECT room_id
+          FROM reserves
+          WHERE DATE(NOW()) BETWEEN start_date AND end_date
+        )
+      ORDER BY r.room_id;
+    `
+      .replaceAll('\n', ' ')
+      .trim(),
+    []
   )
   const responseObject = CustomerGetRoomsResponse.parse({
     rooms: rows,
   })
   res.json(responseObject)
 })
+
+customerRouter.get(
+  '/own-reserves',
+  validateRequestQuery(CustomerGetRequest),
+  async (req: TypedRequestQuery<typeof CustomerGetRequest>, res) => {
+    const { customerId } = req.query
+
+    const [rows] = await databasePool.query(
+      `
+        SELECT
+          reserve_id as reserveId,
+          room_id as roomId,
+          room_num as roomNum,
+          name as roomType,
+          amount as paidAmount,
+          start_date as startDate,
+          end_date as endDate, 
+          CASE
+            WHEN end_date < DATE(NOW()) THEN 'complete'
+            WHEN start_date > DATE(NOW()) THEN 'upcoming'
+            ELSE 'active'
+          END    AS status
+        FROM reserves
+          JOIN rooms USING (room_id)
+          JOIN room_types USING (room_type_id)
+          JOIN income USING (income_id)
+        WHERE customer_id = ?
+        ORDER BY reserve_id asc;
+      `
+        .replaceAll('\n', ' ')
+        .trim(),
+      [customerId]
+    )
+
+    res.json(
+      CustomerGetSelfReservesResponse.parse({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        myReserves: rows.map((row) => ({ ...row, floor: row.roomNum[0] })),
+      })
+    )
+  }
+)
 
 customerRouter.post(
   '/reserves',
@@ -71,8 +132,8 @@ customerRouter.post(
             ].join(' '),
             [
               user_id,
-              dateFormat(reserve_range.end_date),
-              dateFormat(reserve_range.end_date),
+              dateFormat(new Date(reserve_range.start_date)),
+              dateFormat(new Date(reserve_range.end_date)),
               incomeId,
               room_id,
             ]

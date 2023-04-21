@@ -1,60 +1,53 @@
 import { Badge, Table, Group, Text } from '@mantine/core'
+import { CustomerGetSelfReservesResponse } from 'types'
+import { z } from 'zod'
 
-export interface UsersTableProps {
-  data: {
-    room_id: number
-    room_name: string
-    room_type: string
-    start_date: Date
-    end_date: Date
-    status: 'ยังไม่ถึงกำหนด' | 'ยังไม่เข้าพัก' | 'กำลังพักอยู่' | 'เลิกพักแล้ว'
-  }[]
-}
-
-function renderStatus(status: UsersTableProps['data'][0]['status']) {
-  if (status === 'กำลังพักอยู่') {
+function renderStatus(
+  status: z.infer<
+    typeof CustomerGetSelfReservesResponse
+  >['myReserves'][0]['status']
+) {
+  if (status === 'active') {
     return (
       <Badge color="blue" fullWidth variant="filled">
-        {status}
+        อยู่ในช่วงเวลาการจอง
       </Badge>
     )
-  } else if (status === 'ยังไม่ถึงกำหนด') {
+  } else if (status === 'upcoming') {
     return (
       <Badge color="teal" fullWidth variant="filled">
-        {status}
+        ยังไม่ถึงกำหนด
       </Badge>
     )
-  } else if (status === 'ยังไม่เข้าพัก') {
-    return (
-      <Badge color="yellow" fullWidth variant="filled">
-        {status}
-      </Badge>
-    )
-  } else if (status === 'เลิกพักแล้ว') {
+  } else if (status === 'complete') {
     return (
       <Badge color="red" fullWidth variant="filled">
-        {status}
+        เลิกพักแล้ว
       </Badge>
     )
   }
 }
 
-export default function ListReserves({ data }: UsersTableProps) {
+export default function ListReserves({
+  data = [],
+}: {
+  data?: z.infer<typeof CustomerGetSelfReservesResponse.shape.myReserves>
+}) {
   const rows = data.map((item) => (
-    <tr key={item.room_id}>
+    <tr key={item.roomId}>
       <td>
         <Group spacing="sm">
           <div>
             <Text fz="sm" fw={500}>
-              {item.room_name}
+              {item.roomNum}
             </Text>
             <Text fz="xs" c="dimmed">
-              {item.room_type}
+              {item.roomType}
             </Text>
           </div>
         </Group>
       </td>
-      {[item.start_date, item.end_date].map((datee) => (
+      {[item.startDate, item.endDate].map((datee) => (
         <td>
           <Text>
             {datee.toLocaleDateString('th-TH', {
@@ -63,7 +56,7 @@ export default function ListReserves({ data }: UsersTableProps) {
           </Text>
         </td>
       ))}
-      <td>{item.room_name[0]}</td>
+      <td>{item.floor}</td>
       <td>{renderStatus(item.status)}</td>
     </tr>
   ))

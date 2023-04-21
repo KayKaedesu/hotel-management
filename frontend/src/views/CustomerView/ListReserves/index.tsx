@@ -1,16 +1,28 @@
-import ListReserves, { UsersTableProps } from './reserves'
-
-const mockData: UsersTableProps['data'] = [
-  {
-    start_date: new Date('2021-04-01'),
-    end_date: new Date('2021-04-03'),
-    room_id: 1,
-    room_name: '203',
-    room_type: 'ห้องพักเดี่ยว',
-    status: 'ยังไม่ถึงกำหนด',
-  },
-]
+import { useEffect, useState } from 'react'
+import ListReserves from './reserves'
+import { z } from 'zod'
+import { CustomerGetSelfReservesResponse } from 'types'
+import { useCustomerUserStore } from '../shell'
+import axios from 'axios'
+import { API_URL } from '../../../config'
 
 export default function CustomerListReserves() {
-  return <ListReserves data={mockData} />
+  const [reserves, setReserves] =
+    useState<z.infer<typeof CustomerGetSelfReservesResponse>>()
+  const { id } = useCustomerUserStore()
+
+  useEffect(() => {
+    axios
+      .get('/customer/own-reserves', {
+        baseURL: API_URL,
+        params: {
+          customerId: id,
+        },
+      })
+      .then((res) =>
+        setReserves(CustomerGetSelfReservesResponse.parse(res.data))
+      )
+  }, [id])
+
+  return <ListReserves data={reserves?.myReserves} />
 }

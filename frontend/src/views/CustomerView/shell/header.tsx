@@ -13,6 +13,8 @@ import {
   Button,
   Box,
   TextInput,
+  Flex,
+  NumberInput,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import {
@@ -114,7 +116,7 @@ export type User = {
   loggedIn?: boolean
 }
 export type UserSetter = {
-  setId:(value: User['id']) => void
+  setId: (value: User['id']) => void
   setName: (value: User['name']) => void
   setImage: (value: User['image']) => void
   setLoggedIn: (value: User['loggedIn']) => void
@@ -181,7 +183,7 @@ function DropdownMenu() {
 }
 
 export default function CustomerHeader({ tabs }: HeaderTabsProps) {
-  const { name, image, setId } = useCustomerUserStore()
+  const { name, image, setId, id } = useCustomerUserStore()
   const user: User = { name, image }
   const { classes, cx } = useStyles()
   const [opened, { toggle }] = useDisclosure(false)
@@ -211,36 +213,49 @@ export default function CustomerHeader({ tabs }: HeaderTabsProps) {
             className={classes.burger}
             size="sm"
           />
-          <Menu
-            width={260}
-            position="bottom-end"
-            transitionProps={{ transition: 'pop-top-right' }}
-            onClose={() => setUserMenuOpened(false)}
-            onOpen={() => setUserMenuOpened(true)}
-            withinPortal
-          >
-            <Menu.Target>
-              <UnstyledButton
-                className={cx(classes.user, {
-                  [classes.userActive]: userMenuOpened,
-                })}
-              >
-                <Group spacing={7}>
-                  <Avatar
-                    src={user.image}
-                    alt={user.name}
-                    radius="xl"
-                    size={20}
-                  />
-                  <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                    {user.name}
-                  </Text>
-                  <IconChevronDown size={rem(12)} stroke={1.5} />
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
-            <DropdownMenu />
-          </Menu>
+          <Flex>
+            <NumberInput
+              hideControls
+              defaultValue={id}
+              precision={0}
+              description='ID Customer'
+              placeholder='ID Customer'
+              onChange={(value) => {
+                setId(value !== '' ? value : -1)
+              }}
+              
+            />
+            <Menu
+              width={260}
+              position="bottom-end"
+              transitionProps={{ transition: 'pop-top-right' }}
+              onClose={() => setUserMenuOpened(false)}
+              onOpen={() => setUserMenuOpened(true)}
+              withinPortal
+            >
+              <Menu.Target>
+                <UnstyledButton
+                  className={cx(classes.user, {
+                    [classes.userActive]: userMenuOpened,
+                  })}
+                >
+                  <Group spacing={7}>
+                    <Avatar
+                      src={user.image}
+                      alt={user.name}
+                      radius="xl"
+                      size={20}
+                    />
+                    <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
+                      {user.name}
+                    </Text>
+                    <IconChevronDown size={rem(12)} stroke={1.5} />
+                  </Group>
+                </UnstyledButton>
+              </Menu.Target>
+              <DropdownMenu />
+            </Menu>
+          </Flex>
         </Group>
       </Container>
       <Container>
@@ -255,12 +270,7 @@ export default function CustomerHeader({ tabs }: HeaderTabsProps) {
         >
           <Tabs.List>{items}</Tabs.List>
         </Tabs>
-        
       </Container>
-      <TextInput type="number" onChange={(event) => {
-          setId(Number(event?.target.value))
-
-        }} />
     </Box>
   )
 }

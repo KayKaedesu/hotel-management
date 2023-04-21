@@ -51,8 +51,7 @@ async function sendReserveRequest(data: any) {
 }
 
 function CustomerReserveRoom() {
-  const { loggedIn } = useCustomerUserStore()
-  const id = 1
+  const { loggedIn, id } = useCustomerUserStore()
   const navigate = useNavigate()
 
   const [rooms, setRooms] = useState<z.infer<typeof CustomerGetRoomsResponse>>({
@@ -68,7 +67,7 @@ function CustomerReserveRoom() {
   const [paymentAmount, setPaymentAmount] = useState<number>(0)
 
   const Rooms = CustomerGetRoomsResponse.shape.rooms
-  const [reservings, setReservings] = useState<z.infer<typeof Rooms>>([])
+  const [reservings, setReservings] = useState<z.infer<typeof Rooms> | []>([])
 
   // login guard
   useEffect(
@@ -103,6 +102,8 @@ function CustomerReserveRoom() {
     [startDate, endDate, reservings]
   )
 
+  console.log(startDate, endDate)
+
   return (
     <>
       <Grid columns={13} align="end">
@@ -110,11 +111,12 @@ function CustomerReserveRoom() {
           <DatePickerInput
             type="range"
             label="ช่วงวันที่ต้องการจอง"
-            placeholder="ตั้งแต่..ถึง"
+            placeholder="ตั้งแต่...ถึง"
             valueFormat='D MMM YYYY'
             onChange={
               (dates) => {
                 setStartDate(dates[0])
+                console.log(dates)
                 setEndDate(dates[1])
               }
             }

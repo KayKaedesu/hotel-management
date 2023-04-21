@@ -1,4 +1,4 @@
-import { array, z } from 'zod'
+import { z } from 'zod'
 import * as customer from '../models/customers.js'
 import * as room from '../models/rooms.js'
 import * as roomType from '../models/room_types.js'
@@ -11,10 +11,13 @@ import {
   roomTypes,
   employees,
   jobs,
+  accounts,
 } from '../models/index.js'
 import * as employee from '../models/employees.js'
 import * as checkInOut from '../models/check_in_outs.js'
 import { accountType } from '../models/accounts.js'
+import { money } from '../models/base.js'
+import { jobId } from '../models/jobs.js'
 
 export const CustomerGetRoomsResponse = z.object({
   rooms: z.array(
@@ -159,15 +162,73 @@ export const OwnerGetIncomeResponse = z.object({
   ),
 })
 
+export const OwnerGetEmployeeRequest = z.object({
+  jobs: jobId.array()
+})
+
 export const OwnerGetEmployeeResponse = z.object({
   employees: z.array(
     z.object({
       first_name: employees.firstName,
       last_name: employees.lastName,
       tel_num: employees.telNum,
-      // email: accountType,
-      name: jobs.name,
+      username: accounts.username,
+      job_name: jobs.name,
       hourly_wage: jobs.hourlyWage,
     })
   ),
 })
+
+export const OwnerGetCustomerResponse = z.object({
+  customers: z.array(
+    z.object({
+      customer_id: customer.customerId,
+      full_name: customer.firstName,
+    })
+  ),
+})
+
+export const OwnerGetIncomeSumResponse = z.object({
+  incomeArray: z.array(
+    z.object({
+      customer_id: customer.customerId,
+      full_name: z.string(),
+      tel_num: customer.telNum,
+      reserve_count: z.number().int(),
+      check_in_out_count: z.number().int(),
+      income_sum: z.number().nonnegative(),
+    })
+  ),
+})
+
+export const CustomerGetRequest = z.object({
+  customerId: customer.customerId,
+})
+
+export const CustomerGetSelfReservesResponse = z.object({
+  myReserves: z.array(
+    z.object({
+      reserveId: reserve.reserveId,
+      roomId: room.roomId,
+      roomNum: room.roomNum,
+      floor: z.coerce.number().int().positive(),
+      roomType: roomType.name,
+      paidAmount: money,
+      startDate: reserve.startDate,
+      endDate: reserve.endDate,
+      status: z.enum(['upcoming', 'active', 'complete']),
+    })
+  ),
+})
+
+export const OwnerGetJobsResponse = z.object({
+  jobs: z.array(
+    z.object({
+      job_id: jobs.jobId,
+      job_name: jobs.name,
+      hourly_wage: jobs.hourlyWage,
+    })
+  ),
+})
+
+
