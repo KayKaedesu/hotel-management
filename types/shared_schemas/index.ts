@@ -163,14 +163,13 @@ export const OwnerGetIncomeResponse = z.object({
 })
 
 export const OwnerGetEmployeeRequest = z.object({
-  jobs: jobId.array()
+  jobs: jobs.name.array()
 })
 
 export const OwnerGetEmployeeResponse = z.object({
   employees: z.array(
     z.object({
-      first_name: employees.firstName,
-      last_name: employees.lastName,
+      full_name: z.string(),
       tel_num: employees.telNum,
       username: accounts.username,
       job_name: jobs.name,

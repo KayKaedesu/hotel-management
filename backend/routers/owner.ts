@@ -9,6 +9,7 @@ import {
 } from 'types'
 import { ZodError, z } from 'zod'
 import { TypedRequestQuery, validateRequestQuery } from 'zod-express-middleware'
+import { escape } from 'querystring'
 
 const ownerRouter = Router()
 
@@ -76,31 +77,42 @@ ownerRouter.get('/income', async (_req, res) => {
   res.json(responseObject)
 })
 
-ownerRouter.get('/employees',
-validateRequestQuery(OwnerGetEmployeeRequest),  
-async (req: TypedRequestQuery<typeof OwnerGetEmployeeRequest>, res) => {
-  const where = ``
-  const [rows] = await databasePool.query(
-    `
-      SELECT
-        first_name,
-        last_name,
-        tel_num,
-        username,
-        j.name,
-        hourly_wage
-      FROM employees
-      JOIN jobs AS j USING (job_id)
-      JOIN accounts USING (account_id)
-      ${}
-      ORDER BY employee_id;
-`.replaceAll('\n', ' ').trim()
-  )
-  const responseObject = OwnerGetEmployeeResponse.parse({
-    employees: rows,
-  })
-  res.json(responseObject)
-})
+ownerRouter.get(
+  '/employees',
+  validateRequestQuery(OwnerGetEmployeeRequest),
+  async (req: TypedRequestQuery<typeof OwnerGetEmployeeRequest>, res) => {
+    const jobs = req.query.jobs.filter((job) => job.length > 0)
+    const where = jobs.length > 0 ? 'WHERE j.name in (?)' : ''
+
+    try {
+      const [rows] = await databasePool.query(
+        `
+          SELECT
+            employee_id,
+            CONCAT(first_name, ' ', last_name) as full_name,
+            tel_num,
+            username,
+            j.name as job_name,
+            hourly_wage
+          FROM employees
+          JOIN jobs AS j USING (job_id)
+          JOIN accounts USING (account_id)
+          ${where}
+          ORDER BY employee_id;
+        `
+          .replaceAll(/\s+/g, ' ')
+          .trim(),
+        [jobs]
+      )
+      const responseObject = OwnerGetEmployeeResponse.parse({
+        employees: rows,
+      })
+      res.json(responseObject)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+)
 
 export default ownerRouter
 
@@ -120,7 +132,7 @@ ownerRouter.get('/income-sum', async (req, res) => {
     GROUP BY customer_id
     ORDER BY income_sum desc;
     `
-      .replaceAll('\n', ' ')
+      .replaceAll(/\s+/g, ' ')
       .trim()
   )
   try {

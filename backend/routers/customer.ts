@@ -50,7 +50,7 @@ customerRouter.get('/rooms', async (_req, res) => {
         )
       ORDER BY r.room_id;
     `
-      .replaceAll('\n', ' ')
+      .replaceAll(/\s+/g, ' ')
       .trim(),
     []
   )
@@ -88,7 +88,7 @@ customerRouter.get(
         WHERE customer_id = ?
         ORDER BY reserve_id asc;
       `
-        .replaceAll('\n', ' ')
+        .replaceAll(/\s+/g, ' ')
         .trim(),
       [customerId]
     )
