@@ -4,14 +4,15 @@ import NavbarLinksGroup, { LinksGroupProps } from './links'
 import { IconUserPlus, IconCalendarTime, IconBedFilled } from '@tabler/icons-react'
 
 import Header from './header'
+import { Notifications } from '@mantine/notifications'
 
 const navLinks: LinksGroupProps[] = [
   {
     label: 'ลูกค้า',
     icon: IconUserPlus,
     links: [
-      { label: 'เพิ่มลูกค้า', link: '/reception/guest/add' },
-      { label: 'ดูรายการลูกค้า', link: '/reception/guest/view' },
+      { label: 'เพิ่มลูกค้า', link: '/reception/customer/add' },
+      { label: 'ดูรายการลูกค้า', link: '/reception/customer/view' },
       // { label: 'Previous releases', link: '/reception/' },
       // { label: 'Releases schedule', link: '/' },
     ],
@@ -59,6 +60,7 @@ export default function ReceptionistShell() {
       })}
     >
       <Outlet />
+      <Notifications />
     </AppShell>
   )
 }

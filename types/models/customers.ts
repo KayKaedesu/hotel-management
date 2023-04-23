@@ -3,7 +3,7 @@ import { accountId as _accountId } from './accounts.js'
 
 const firstName = z.string().min(3).max(50)
 const lastName = z.string().min(3).max(50)
-const telNum = z.string().length(10)
+const telNum = z.string()
 const accountId = _accountId.nullable()
 
 export { firstName, lastName, telNum }

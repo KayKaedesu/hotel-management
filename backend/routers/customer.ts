@@ -4,11 +4,14 @@ import {
   PostReservesRequest,
   CustomerGetRequest,
   CustomerGetSelfReservesResponse,
+  CustomerPostCustomersRequest,
+  CustomerPostCustomersResponse,
 } from 'types'
 import databasePool from '../adapters/db_adapter.js'
 import {
   TypedRequestQuery,
   processRequestBody,
+  validateRequestBody,
   validateRequestQuery,
 } from 'zod-express-middleware'
 import { TypedRequestBody } from 'zod-express-middleware'
@@ -16,8 +19,65 @@ import { dateFormat } from '../utils/format.js'
 
 const customerRouter = Router()
 
+customerRouter.post(
+  '/customers',
+  validateRequestBody(CustomerPostCustomersRequest),
+  async (req: TypedRequestBody<typeof CustomerPostCustomersRequest>, res) => {
+    const { first_name, last_name, tel_num, email, password, username } =
+      req.body
+
+    const connection = await databasePool.getConnection()
+    try {
+      await connection.beginTransaction()
+
+      const [accResults] = await connection.query(
+        `
+            INSERT INTO accounts(username, password, email, account_type)
+            VALUES (?, ?, ?, ?)
+          `
+          .replaceAll(/\s+/g, ' ')
+          .trim(),
+        [username, password, email, 'Customer']
+      )
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const accountId = accResults.insertId
+
+      const [cusResults] = await connection.query(
+        `
+        INSERT INTO customers(first_name, last_name, tel_num, account_id)
+        VALUES(?, ?, ?, ?)
+        `
+          .replaceAll(/\s+/g, ' ')
+          .trim(),
+        [first_name, last_name, tel_num, accountId]
+      )
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const customerId: number = cusResults.insertId
+
+      res.status(201).json(
+        CustomerPostCustomersResponse.parse({
+          first_name,
+          last_name,
+          tel_num,
+          account_id: accountId,
+          customer_id: customerId,
+        })
+      )
+
+      await connection.commit()
+    } catch (e) {
+      await connection.rollback()
+      res.status(400).send(e)
+    }
+  }
+)
+
 customerRouter.get('/room_types', async (_req, res) => {
-  const [rows, results] = await databasePool.query(
+  const [rows] = await databasePool.query(
     ['SELECT', '*', 'FROM room_types', 'ORDER BY room_type_id asc;'].join(' ')
   )
   const responseObject = CustomerGetRoomsResponse.parse({
@@ -28,7 +88,7 @@ customerRouter.get('/room_types', async (_req, res) => {
 
 // empty rooms
 customerRouter.get('/rooms', async (_req, res) => {
-  const [rows, results] = await databasePool.query(
+  const [rows] = await databasePool.query(
     `
       SELECT
         r.room_id,
