@@ -4,8 +4,10 @@ import axios from 'axios'
 import { API_URL } from '../../../config'
 import { ReceptionGetRoomsResponse } from 'types'
 import { z } from 'zod'
+import { DateInput } from '@mantine/dates'
 
 function CheckRoom() {
+  const [userQuery, setUserQuery] = useState<{ queryDate: Date | null }>()
   const [rooms, setRooms] = useState<
     z.infer<typeof ReceptionGetRoomsResponse.shape.allRooms>
   >([])
@@ -13,14 +15,23 @@ function CheckRoom() {
     axios
       .get('/reception/rooms', {
         baseURL: API_URL,
+        params: userQuery,
       })
       .then((res) => {
         setRooms(res.data.allRooms)
       })
-  }, [])
+  }, [userQuery])
   return (
     <Table>
       <thead>
+        <DateInput
+          valueFormat="YYYY MMM DD"
+          label="Date input"
+          placeholder="Date input"
+          maw={400}
+          mx="auto"
+          onChange={(date) => setUserQuery({ queryDate: date })}
+        />
         <tr>
           <th>หมายเลขห้อง</th>
           <th>ประเภทห้อง</th>
@@ -39,11 +50,11 @@ function CheckRoom() {
               <td>{i.description}</td>
               <td>
                 {i.reserve_id != 0 || i.check_in_out_id != 0 ? (
-                  <Badge color="red" variant="filled" >
+                  <Badge color="red" variant="filled">
                     ไม่ว่าง
                   </Badge>
                 ) : (
-                  <Badge color="green" variant="filled" >
+                  <Badge color="green" variant="filled">
                     ว่าง
                   </Badge>
                 )}
@@ -51,7 +62,6 @@ function CheckRoom() {
             </tr>
           )
         })}
-        <td></td>
       </tbody>
     </Table>
   )
