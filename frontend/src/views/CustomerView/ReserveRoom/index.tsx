@@ -150,7 +150,7 @@ function CustomerReserveRoom() {
           <Button
             onClick={() => {
               sendReserveRequest({
-                user_id: 1,
+                user_id: id,
                 room_ids: reservings.map((room) => room.room_id),
                 reserve_range: [startDate, endDate],
                 payment_amount: paymentAmount,
