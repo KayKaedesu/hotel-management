@@ -6,6 +6,7 @@ import {
   OwnerGetEmployeeResponse,
   OwnerGetIncomeSumResponse,
   OwnerGetEmployeeRequest,
+  OwnerGetIncomeResponse,
 } from 'types'
 import { ZodError, z } from 'zod'
 import { TypedRequestQuery, validateRequestQuery } from 'zod-express-middleware'
@@ -71,7 +72,7 @@ ownerRouter.get('/income', async (_req, res) => {
       'ORDER BY room_id, received_at asc;',
     ].join(' ')
   )
-  const responseObject = OwnerGetIncomeSumResponse.parse({
+  const responseObject = OwnerGetIncomeResponse.parse({
     income: rows,
   })
   res.json(responseObject)
