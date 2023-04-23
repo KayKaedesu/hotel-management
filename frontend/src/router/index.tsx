@@ -20,6 +20,8 @@ import CustomerAuthShell from '../views/CustomerView/auth/shell'
 import CustomerListReserves from '../views/CustomerView/ListReserves'
 import EmployeeShell from '../views/EmployeeView/shell'
 import EmployeeWorks from '../views/EmployeeView/Works'
+import OwnerShell from '../views/OwnerView/shell'
+import CheckEmployees from '../views/OwnerView/EmployeeList'
 
 export const receptionistRoutes: RouteObject[] = [
   {
@@ -98,6 +100,19 @@ const employeeRoutes: RouteObject[] = [
   },
 ]
 
+const ownerRoutes: RouteObject[] = [
+  {
+    element: <OwnerShell />,
+    path: '/owner',
+    children: [
+      {
+        path: 'employee-list',
+        element: <CheckEmployees />,
+      },
+    ],
+  },
+]
+
 const homeRouter: RouteObject = {
   path: '/',
   element: <Home />,
@@ -105,7 +120,13 @@ const homeRouter: RouteObject = {
 
 const router = createBrowserRouter([
   {
-    children: [homeRouter, ...receptionistRoutes, ...customerRoutes, ...employeeRoutes],
+    children: [
+      homeRouter,
+      ...receptionistRoutes,
+      ...customerRoutes,
+      ...employeeRoutes,
+      ...ownerRoutes,
+    ],
   },
 ])
 

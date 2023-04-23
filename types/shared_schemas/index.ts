@@ -163,7 +163,7 @@ export const OwnerGetIncomeResponse = z.object({
 })
 
 export const OwnerGetEmployeeRequest = z.object({
-  jobs: jobs.name.array()
+  jobs: jobs.name.array(),
 })
 
 export const OwnerGetEmployeeResponse = z.object({
@@ -229,5 +229,3 @@ export const OwnerGetJobsResponse = z.object({
     })
   ),
 })
-
-
