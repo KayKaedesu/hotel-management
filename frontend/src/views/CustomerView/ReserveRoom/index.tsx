@@ -30,8 +30,6 @@ async function sendReserveRequest(data: any) {
         color: 'green',
       })
     }
-    
-
   } catch (e) {
     if (e instanceof ZodError) {
       console.error(e)
@@ -112,19 +110,16 @@ function CustomerReserveRoom() {
             type="range"
             label="ช่วงวันที่ต้องการจอง"
             placeholder="ตั้งแต่...ถึง"
-            valueFormat='D MMM YYYY'
-            onChange={
-              (dates) => {
-                setStartDate(dates[0])
-                console.log(dates)
-                setEndDate(dates[1])
-              }
-            }
+            valueFormat="D MMM YYYY"
+            onChange={(dates) => {
+              setStartDate(dates[0])
+              console.log(dates)
+              setEndDate(dates[1])
+            }}
             minDate={new Date()}
             maxDate={limitDate}
           />
         </Grid.Col>
-        
       </Grid>
       <Grid>
         <Grid.Col>

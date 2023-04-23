@@ -29,8 +29,13 @@ export const receptionistRoutes: RouteObject[] = [
     element: <ReceptionistShell />,
     children: [
       {
-        path: 'add-customer',
-        element: <AddCustomer />,
+        path: 'customer/',
+        children: [
+          {
+            path: 'add',
+            element: <AddCustomer />,
+          },
+        ],
       },
       {
         path: 'rooms',

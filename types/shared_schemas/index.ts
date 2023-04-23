@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import * as customer from '../models/customers.js'
 import * as room from '../models/rooms.js'
 import * as roomType from '../models/room_types.js'
 import * as reserve from '../models/reserves.js'
@@ -13,11 +12,13 @@ import {
   jobs,
   accounts,
 } from '../models/index.js'
+import * as customer from '../models/customers.js'
 import * as employee from '../models/employees.js'
 import * as checkInOut from '../models/check_in_outs.js'
-import { accountType } from '../models/accounts.js'
+import { accountType, password, email } from '../models/accounts.js'
 import { money } from '../models/base.js'
 import { jobId } from '../models/jobs.js'
+import { username } from '../models/accounts.js'
 
 export const CustomerGetRoomsResponse = z.object({
   rooms: z.array(
@@ -100,6 +101,48 @@ export const ReceptionGetRoomsResponse = z.object({
       check_in_out_id: checkInOut.checkInOutId.optional(),
     })
   ),
+})
+
+export const ReceptionPostCustomersRequest = z.object({
+  first_name: customer.firstName,
+  last_name: customer.lastName,
+  tel_num: customer.telNum,
+  account: z
+    .object({
+      username,
+      password,
+      email,
+    })
+    .optional(),
+})
+
+export const ReceptionPostCustomersResponse = z.object({
+  first_name: customer.firstName,
+  last_name: customer.lastName,
+  tel_num: customer.telNum,
+  customer_id: customer.customerId,
+  account_id: customer.accountId.optional(),
+})
+
+export const CustomerPostCustomersRequest = z.object({
+  first_name: customer.firstName,
+  last_name: customer.lastName,
+  tel_num: customer.telNum,
+  username,
+  password,
+  email,
+})
+
+export const CustomerPostCustomersResponse = z.object({
+  first_name: customer.firstName,
+  last_name: customer.lastName,
+  tel_num: customer.telNum,
+  customer_id: customer.customerId,
+  account_id: customer.accountId
+})
+
+export const ReceptionistGetCustomersRequest = z.object({
+  customer_id: customer.customerId,
 })
 
 export const EmployeeGetSelfRequest = z.object({
