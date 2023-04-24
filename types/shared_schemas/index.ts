@@ -138,7 +138,7 @@ export const CustomerPostCustomersResponse = z.object({
   last_name: customer.lastName,
   tel_num: customer.telNum,
   customer_id: customer.customerId,
-  account_id: customer.accountId
+  account_id: customer.accountId,
 })
 
 export const ReceptionistGetCustomersRequest = z.object({
@@ -194,13 +194,13 @@ export const OwnerGetLogResponse = z.object({
 export const OwnerGetIncomeResponse = z.object({
   income: z.array(
     z.object({
-      room_id: rooms.roomId,
-      name: roomTypes.name,
+      room_id: rooms.roomId.nullable(),
+      name: roomTypes.name.nullable(),
       amount: income.amount,
-      received_at: income.receivedAt,
+      received_at: income.receivedAt.nullable(),
       source: income.source,
-      reserve_id: reserve.reserveId,
-      check_in_out_id: checkInOut.checkInOutId,
+      reserve_id: reserve.reserveId.nullable(),
+      check_in_out_id: checkInOut.checkInOutId.nullable(),
     })
   ),
 })
